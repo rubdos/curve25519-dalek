@@ -18,7 +18,7 @@ pub mod packed_simd;
 #[cfg(target_arch = "x86_64")]
 pub mod avx2;
 
-#[cfg(all(nightly, target_arch = "x86_64"))]
+#[cfg(all(curve25519_dalek_backend = "unstable_avx512", nightly))]
 pub mod ifma;
 
 #[cfg(all(nightly, target_arch = "aarch64"))]
