@@ -93,13 +93,13 @@ where
     use crate::traits::VartimeMultiscalarMul;
 
     match get_selected_backend() {
-        #[cfg(all(curve25519_dalek_backend = "simd", target_arch="x86_64"))]
+        #[cfg(all(curve25519_dalek_backend = "simd", target_arch = "x86_64"))]
         BackendKind::Avx2 =>
             vector::scalar_mul::pippenger::spec_avx2::Pippenger::optional_multiscalar_mul::<I, J>(scalars, points),
         #[cfg(all(curve25519_dalek_backend = "unstable_avx512", nightly))]
         BackendKind::Avx512 =>
             vector::scalar_mul::pippenger::spec_avx512ifma_avx512vl::Pippenger::optional_multiscalar_mul::<I, J>(scalars, points),
-        #[cfg(all(curve25519_dalek_backend = "simd", nightly, target_arch="aarch64"))]
+        #[cfg(all(curve25519_dalek_backend = "simd", nightly, target_arch = "aarch64"))]
         BackendKind::Neon =>
             vector::scalar_mul::pippenger::spec_neon::Pippenger::optional_multiscalar_mul::<I, J>(scalars, points),
         BackendKind::Serial =>
@@ -130,13 +130,13 @@ impl VartimePrecomputedStraus {
         use crate::traits::VartimePrecomputedMultiscalarMul;
 
         match get_selected_backend() {
-            #[cfg(all(curve25519_dalek_backend = "simd", target_arch="x86_64"))]
+            #[cfg(all(curve25519_dalek_backend = "simd", target_arch = "x86_64"))]
             BackendKind::Avx2 =>
                 VartimePrecomputedStraus::Avx2(vector::scalar_mul::precomputed_straus::spec_avx2::VartimePrecomputedStraus::new(static_points)),
             #[cfg(all(curve25519_dalek_backend = "unstable_avx512", nightly))]
             BackendKind::Avx512 =>
                 VartimePrecomputedStraus::Avx512ifma(vector::scalar_mul::precomputed_straus::spec_avx512ifma_avx512vl::VartimePrecomputedStraus::new(static_points)),
-            #[cfg(all(curve25519_dalek_backend = "simd", nightly, target_arch="aarch64"))]
+            #[cfg(all(curve25519_dalek_backend = "simd", nightly, target_arch = "aarch64"))]
             BackendKind::Neon =>
                 VartimePrecomputedStraus::Neon(vector::scalar_mul::precomputed_straus::spec_neon::VartimePrecomputedStraus::new(static_points)),
             BackendKind::Serial =>
@@ -149,10 +149,12 @@ impl VartimePrecomputedStraus {
         use crate::traits::VartimePrecomputedMultiscalarMul;
 
         match self {
-            #[cfg(curve25519_dalek_backend = "simd")]
+            #[cfg(all(curve25519_dalek_backend = "simd", target_arch = "x86_64"))]
             VartimePrecomputedStraus::Avx2(inner) => inner.len(),
             #[cfg(all(curve25519_dalek_backend = "unstable_avx512", nightly))]
             VartimePrecomputedStraus::Avx512ifma(inner) => inner.len(),
+            #[cfg(all(curve25519_dalek_backend = "simd", nightly, target_arch = "aarch64"))]
+            VartimePrecomputedStraus::Neon(inner) => inner.len(),
             VartimePrecomputedStraus::Scalar(inner) => inner.len(),
         }
     }
@@ -162,10 +164,12 @@ impl VartimePrecomputedStraus {
         use crate::traits::VartimePrecomputedMultiscalarMul;
 
         match self {
-            #[cfg(curve25519_dalek_backend = "simd")]
+            #[cfg(all(curve25519_dalek_backend = "simd", target_arch = "x86_64"))]
             VartimePrecomputedStraus::Avx2(inner) => inner.is_empty(),
             #[cfg(all(curve25519_dalek_backend = "unstable_avx512", nightly))]
             VartimePrecomputedStraus::Avx512ifma(inner) => inner.is_empty(),
+            #[cfg(all(curve25519_dalek_backend = "simd", nightly, target_arch = "aarch64"))]
+            VartimePrecomputedStraus::Neon(inner) => inner.is_empty(),
             VartimePrecomputedStraus::Scalar(inner) => inner.is_empty(),
         }
     }
